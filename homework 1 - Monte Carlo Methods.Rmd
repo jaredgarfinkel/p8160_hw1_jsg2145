@@ -1,17 +1,33 @@
 ---
 title: "Homework 1 - Monte Carlo Methods"
-author: "Leave your name and uni here"
+author: "Jared Garfinkel - jsg2145"
 
-output: pdf_document
+output: github_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(modelr)
+library(viridis)
+knitr::opts_chunk$set(
+	echo = TRUE,
+	warning = FALSE,
+	fig.width = 8, 
+  fig.height = 6,
+  out.width = "90%"
+)
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
 ```
 
 # Problem 1
-The standard Laplace distribution has density $f(x) = 0.5e^{-|x|}, x\in
-(-\infty, \infty)$. Please provide an algorithm that uses the inverse transformation method to generate a random sample from this distribution. Use the $U(0,1)$ random number generator in  \em{\bf{R}}, write a  \em{\bf{R}}-function to implement the algorithm. Use visualization tools to validate your algorithm (i.e., illustrate whether the random numbers generated from your function truely follows the standard Laplace distribution.)
+The standard Laplace distribution has density $$f(x) = 0.5e^{-|x|}, x \in
+(-\infty, \infty)$$. Please provide an algorithm that uses the inverse transformation method to generate a random sample from this distribution. Use the $U(0,1)$ random number generator in  $\em{\bf{R}}$, write a  $$\em{\bf{R}}$$-function to implement the algorithm. Use visualization tools to validate your algorithm (i.e., illustrate whether the random numbers generated from your function truely follows the standard Laplace distribution.)
 
 # Answer: your answer starts here...
 
