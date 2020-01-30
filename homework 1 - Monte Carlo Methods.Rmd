@@ -27,12 +27,60 @@ theme_set(theme_minimal() + theme(legend.position = "bottom"))
 
 # Problem 1
 The standard Laplace distribution has density $$f(x) = 0.5e^{-|x|}, x \in
-(-\infty, \infty)$$. Please provide an algorithm that uses the inverse transformation method to generate a random sample from this distribution. Use the $U(0,1)$ random number generator in  $\em{\bf{R}}$, write a  $$\em{\bf{R}}$$-function to implement the algorithm. Use visualization tools to validate your algorithm (i.e., illustrate whether the random numbers generated from your function truely follows the standard Laplace distribution.)
+(-\infty, \infty)$$. Please provide an algorithm that uses the inverse transformation method to generate a random sample from this distribution. Use the $U(0,1)$ random number generator in  \em{\bf{R}}, write a  \em{\bf{R}}-function to implement the algorithm. Use visualization tools to validate your algorithm (i.e., illustrate whether the random numbers generated from your function truely follows the standard Laplace distribution.)
 
 # Answer: your answer starts here...
 
+X = $F^{-1}(U)$
+
+\mu = $F(x)$
+
+$f(x) =  0.5e^{-|x|},~x \in(-\infty, \infty)$
+
+\begin{document}
+\[   \left\{
+\begin{array}{ll}
+      F(x) = 0.5e^x & x \le 0 \\
+      F(x) = 1-0.5e^{-x} & x > 0\\
+\end{array} 
+\right. \]
+\end{document}
+
+\begin{document}
+\[   \left\{
+\begin{array}{ll}
+      x = ln(2U) & U < \frac{1}{2} \\
+      x = -ln(2-2U) & U \ge \frac{1}{2}\\
+\end{array} 
+\right. \]
+\end{document}
+
 ```{r }
-#Your R codes/functions 
+set.seed(123)
+U <- runif(1000)
+X <- (U < 0.5) * log(2*U) + (U >= 0.5) * -log(2-2*U)
+
+plot(X)
+hist(X, prob = T)
+
+
+```
+
+```{r, include = FALSE}
+xdens = function(x){
+  return(0.5* exp(x) * (x <= 0) + (1-0.5*exp(-x) * (x > 0)))
+}
+unifdens = function(x){
+  return(0.5 * (x >= 0 & X <= 1))
+}
+
+accrej <- function(fdens, gdens, M, x){
+  return(x[runif(length(x)) <= fdens(x) / (M * gdens(x))])
+}
+
+y = accrej(xdens, unifdens, 10, U)
+
+hist(y)
 ```
 
 #Problem 2
@@ -40,10 +88,20 @@ The standard Laplace distribution has density $$f(x) = 0.5e^{-|x|}, x \in
 Use the inverse transformation method to  derive an algorithm for generating a Pareto random number with $U\sim U(0,1)$, where the Pareto random number has a probability density function 
      $$f(x; \alpha, \gamma)=\frac{\gamma\alpha^{\gamma}}{x^{\gamma+1}} I\{x\ge \alpha\}$$ with two parameters $\alpha >0$ and $\gamma>0$. Use visualization tools to validate your algorithm (i.e., illustrate whether the random numbers generated from your function truely follows the target distribution.)
 
+$$F(x) = 1 - \left(\frac{\alpha}{x}\right)^{\gamma},~x \ge \alpha,~\alpha > 0,~\gamma > 0$$
+
+$$x = \frac{\alpha}{(1-u)^{1/\gamma}}$$
 
 # Answer:  your answer starts here...
 ```{r }
-#Your R codes/functions 
+set.seed(1001)
+U <- runif(1000)
+gamma <- 5
+alpha <- 2
+X <- alpha/((1-U)^(1/gamma))
+
+
+hist(X, prob = T)
 ```
 
 #Problem 3
