@@ -66,23 +66,6 @@ hist(X, prob = T)
 
 ```
 
-```{r, include = FALSE}
-xdens = function(x){
-  return(0.5* exp(x) * (x <= 0) + (1-0.5*exp(-x) * (x > 0)))
-}
-unifdens = function(x){
-  return(0.5 * (x >= 0 & X <= 1))
-}
-
-accrej <- function(fdens, gdens, M, x){
-  return(x[runif(length(x)) <= fdens(x) / (M * gdens(x))])
-}
-
-y = accrej(xdens, unifdens, 10, U)
-
-hist(y)
-```
-
 #Problem 2
 
 Use the inverse transformation method to  derive an algorithm for generating a Pareto random number with $U\sim U(0,1)$, where the Pareto random number has a probability density function 
@@ -96,12 +79,13 @@ $$x = \frac{\alpha}{(1-u)^{1/\gamma}}$$
 ```{r }
 set.seed(1001)
 U <- runif(1000)
-gamma <- 5
-alpha <- 2
-X <- alpha/((1-U)^(1/gamma))
+xdens = function(gamma = 5, alpha = 2, x = U) {
+  alpha/((1-U)^(1/gamma))
+}
 
+x <- xdens(5, 2, U)
 
-hist(X, prob = T)
+hist(x, prob = T)
 ```
 
 #Problem 3
@@ -112,8 +96,26 @@ Construct an algorithm for using the acceptance/rejection method to generate 100
 The simplest choice for $g(x)$ is the $U(-\beta, \beta)$ distribution but other choices are possible as well. Use visualization tools to validate your algorithm (i.e., illustrate whether the random numbers generated from your function truely follows the target distribution.)
 
 # Answer:  your answer starts here...
-```{r }
-#Your R codes/functions 
+```{r, eval = FALSE}
+set.seed(1001)
+
+U = runif(1000)
+
+xdens = function(beta, .x){
+  return((2/(pi*beta^2))*sqrt(beta^2 - x^2) * (x <= beta))
+}
+
+unifdens = function(x){
+  return(runif(1000, min = -x, max = x))
+}
+
+accrej <- function(fdens, gdens, M = 4/pi, x){
+  return(x[runif(length(x)) <= fdens(x) / (M * gdens(x))])
+}
+
+y = accrej(xdens, unifdens, M, U)
+
+hist(y)
 ```
 
 

@@ -8,17 +8,31 @@ The standard Laplace distribution has density
 \[f(x) = 0.5e^{-|x|}, x \in
 (-\infty, \infty)\]. Please provide an algorithm that uses the inverse
 transformation method to generate a random sample from this
-distribution. Use the \(U(0,1)\) random number generator in
-\(\em{\bf{R}}\), write a \[\em{\bf{R}}\]-function to implement the
-algorithm. Use visualization tools to validate your algorithm (i.e.,
-illustrate whether the random numbers generated from your function
-truely follows the standard Laplace distribution.)
+distribution. Use the \(U(0,1)\) random number generator in 
 
 # Answer: your answer starts here…
 
+X = \(F^{-1}(U)\)
+
+\= \(F(x)\)
+
+\(f(x) = 0.5e^{-|x|},~x \in(-\infty, \infty)\)
+
 ``` r
-#Your R codes/functions 
+set.seed(123)
+U <- runif(1000)
+X <- (U < 0.5) * log(2*U) + (U >= 0.5) * -log(2-2*U)
+
+plot(X)
 ```
+
+<img src="homework-1---Monte-Carlo-Methods_files/figure-gfm/unnamed-chunk-1-1.png" width="90%" />
+
+``` r
+hist(X, prob = T)
+```
+
+<img src="homework-1---Monte-Carlo-Methods_files/figure-gfm/unnamed-chunk-1-2.png" width="90%" />
 
 \#Problem 2
 
@@ -31,11 +45,25 @@ tools to validate your algorithm (i.e., illustrate whether the random
 numbers generated from your function truely follows the target
 distribution.)
 
+\[F(x) = 1 - \left(\frac{\alpha}{x}\right)^{\gamma},~x \ge \alpha,~\alpha > 0,~\gamma > 0\]
+
+\[x = \frac{\alpha}{(1-u)^{1/\gamma}}\]
+
 # Answer: your answer starts here…
 
 ``` r
-#Your R codes/functions 
+set.seed(1001)
+U <- runif(1000)
+xdens = function(gamma = 5, alpha = 2, x = U) {
+  alpha/((1-U)^(1/gamma))
+}
+
+x <- xdens(5, 2, U)
+
+hist(x, prob = T)
 ```
+
+<img src="homework-1---Monte-Carlo-Methods_files/figure-gfm/unnamed-chunk-2-1.png" width="90%" />
 
 \#Problem 3
 
@@ -51,7 +79,25 @@ distribution.)
 # Answer: your answer starts here…
 
 ``` r
-#Your R codes/functions 
+set.seed(1001)
+
+U = runif(1000)
+
+xdens = function(beta, .x){
+  return((2/(pi*beta^2))*sqrt(beta^2 - x^2) * (x <= beta))
+}
+
+unifdens = function(x){
+  return(runif(1000, min = -x, max = x))
+}
+
+accrej <- function(fdens, gdens, M = 4/pi, x){
+  return(x[runif(length(x)) <= fdens(x) / (M * gdens(x))])
+}
+
+y = accrej(xdens, unifdens, M, U)
+
+hist(y)
 ```
 
 \#Problem 4
