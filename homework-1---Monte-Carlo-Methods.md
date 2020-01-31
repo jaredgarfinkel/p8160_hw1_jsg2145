@@ -81,24 +81,26 @@ distribution.)
 ``` r
 set.seed(1001)
 
-U = runif(1000)
-
-xdens = function(beta, .x){
-  return((2/(pi*beta^2))*sqrt(beta^2 - x^2) * (x <= beta))
+accrej <- function(fdens, gdens, beta, M = (4/pi), x){
+  x = runif(2222, min = -beta, max = beta)
+  return(x[runif(length(x)) <= fdens(x, beta) / (M * gdens(x, beta))])
 }
 
-unifdens = function(x){
-  return(runif(1000, min = -x, max = x))
+xdens = function(x, beta){
+  return((2/(pi*beta^2))*sqrt(beta^2 - x^2) * (abs(x) <= beta))
 }
 
-accrej <- function(fdens, gdens, M = 4/pi, x){
-  return(x[runif(length(x)) <= fdens(x) / (M * gdens(x))])
+unifdens = function(x, beta){
+  return((1/(2*beta))*(abs(x) <= beta))
 }
 
-y = accrej(xdens, unifdens, M, U)
 
-hist(y)
+y = accrej(xdens, unifdens, 3, 4/pi)
+
+hist(y, prob = T)
 ```
+
+<img src="homework-1---Monte-Carlo-Methods_files/figure-gfm/unnamed-chunk-3-1.png" width="90%" />
 
 \#Problem 4
 
