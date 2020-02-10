@@ -110,7 +110,41 @@ Develop two Monte Carlo methods for the estimation of
 # Answer: your answer starts here…
 
 ``` r
-#Your R codes/functions 
+simdat <- function(n, x) {
+  rexp(n, rate = x^2)
+}
+```
+
+``` r
+compare <- function(n, x, N=500) {
+  SSEmean <- SSEmedian <- 0                    
+# Initialize
+  for(i in 1:N){
+    dat <- integrate(simdat, 0, 1)
+    SSEmean <- SSEmean + mean(dat)^2
+    SSEmedian <- SSEmedian + median(dat)^2
+  }
+  
+  return(list(n=n, x=x, MSEmean = SSEmean / N,
+              MSEmedian = SSEmedian / N))
+}
+```
+
+``` r
+pvec <- seq(1, 30, by=1)
+
+res <- NULL
+
+for(i in 1:length(pvec)){
+  res <- rbind(res, as.numeric(compare(30, pvec[i])))
+}
+
+res <- data.frame(res)
+names(res) <- c("n", "x", "MSEmean", "MSEmedian")
+
+plot(res$x, res$MSEmean, type="l", xlab="x", ylab="MSE",
+     ylim=c(0,max(res$MSEmean)))
+lines(res$x, res$MSEmedian,lty=2)
 ```
 
 \#Problem 5 Show that in estimating \(\theta=E\sqrt{1-U^2}\) it is

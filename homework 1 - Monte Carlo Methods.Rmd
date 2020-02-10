@@ -124,14 +124,51 @@ hist(y, prob = T)
 Develop two Monte Carlo methods for the estimation of $\theta=\int_0^1 e^{x^2} dx$ and implement in \em{\bf{R}} .
 
 # Answer:  your answer starts here...
-```{r }
-#Your R codes/functions 
+```{r exponential data}
+simdat <- function(n, x) {
+  rexp(n, rate = x^2)
+}
 ```
+
+```{r, eval = FALSE}
+compare <- function(n, x, N=500) {
+  SSEmean <- SSEmedian <- 0                    
+# Initialize
+  for(i in 1:N){
+    dat <- integrate(simdat, 0, 1)
+    SSEmean <- SSEmean + mean(dat)^2
+    SSEmedian <- SSEmedian + median(dat)^2
+  }
+  
+  return(list(n=n, x=x, MSEmean = SSEmean / N,
+              MSEmedian = SSEmedian / N))
+}
+```
+
+```{r, eval = FALSE}
+pvec <- seq(1, 30, by=1)
+
+res <- NULL
+
+for(i in 1:length(pvec)){
+  res <- rbind(res, as.numeric(compare(30, pvec[i])))
+}
+
+res <- data.frame(res)
+names(res) <- c("n", "x", "MSEmean", "MSEmedian")
+
+plot(res$x, res$MSEmean, type="l", xlab="x", ylab="MSE",
+     ylim=c(0,max(res$MSEmean)))
+lines(res$x, res$MSEmedian,lty=2)
+```
+
+
 
 #Problem 5
 Show that in estimating $\theta=E\sqrt{1-U^2}$ it is better to use $U^2$ rather than $U$ as the control variate, where $U\sim U(0,1)$.  To do this, use simulation to approximate the necessary covariances. In addition, implement your algorithms in  \em{\bf{R}}.
 
 # Answer:  your answer starts here...
+
 ```{r }
 #Your R codes/functions 
 ```
