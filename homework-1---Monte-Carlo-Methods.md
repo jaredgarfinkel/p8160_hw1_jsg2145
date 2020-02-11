@@ -110,41 +110,15 @@ Develop two Monte Carlo methods for the estimation of
 # Answer: your answer starts here…
 
 ``` r
-simdat <- function(n, x) {
-  rexp(n, rate = x^2)
-}
-```
+n = 10000
+u = runif(n)
+y = sum(exp(u^2))/n
+x = median(exp(u^2))
 
-``` r
-compare <- function(n, x, N=500) {
-  SSEmean <- SSEmedian <- 0                    
-# Initialize
-  for(i in 1:N){
-    dat <- integrate(simdat, 0, 1)
-    SSEmean <- SSEmean + mean(dat)^2
-    SSEmedian <- SSEmedian + median(dat)^2
-  }
-  
-  return(list(n=n, x=x, MSEmean = SSEmean / N,
-              MSEmedian = SSEmedian / N))
-}
-```
-
-``` r
-pvec <- seq(1, 30, by=1)
-
-res <- NULL
-
-for(i in 1:length(pvec)){
-  res <- rbind(res, as.numeric(compare(30, pvec[i])))
-}
-
-res <- data.frame(res)
-names(res) <- c("n", "x", "MSEmean", "MSEmedian")
-
-plot(res$x, res$MSEmean, type="l", xlab="x", ylab="MSE",
-     ylim=c(0,max(res$MSEmean)))
-lines(res$x, res$MSEmedian,lty=2)
+xy = tibble(
+  median = x,
+  mean = y
+)
 ```
 
 \#Problem 5 Show that in estimating \(\theta=E\sqrt{1-U^2}\) it is
@@ -155,15 +129,70 @@ necessary covariances. In addition, implement your algorithms in
 # Answer: your answer starts here…
 
 ``` r
-#Your R codes/functions 
+gfun<-function(x){ 
+  sqrt(1 - x^2)
+}
+mfun<-function(x) {
+  x^2
+}
+mfun2<-function(x) {
+  x
+}
+set.seed(123)
+uran<-runif(10000)
+ga<-gfun(uran)
+ma<-mfun(uran)
+ma2<-mfun2(uran)
 ```
+
+``` r
+theta1<-mean(ga)
+theta2<-mean(ma2)
+hha<- pi/4 + (ga-ma)
+hha2<- pi/4 + (ga-ma2)
+theta1a<-mean(hha)
+theta2a<-mean(hha2)
+
+c(var(ga), var(hha))
+```
+
+    ## [1] 0.04848323 0.26344282
+
+``` r
+c(var(ga), var(hha2))
+```
+
+    ## [1] 0.04848323 0.24693579
+
+``` r
+(var(ga)-var(hha))/var(ga)
+```
+
+    ## [1] -4.43369
+
+``` r
+(var(ga)-var(hha2))/var(ga)
+```
+
+    ## [1] -4.093221
 
 \#Problem 6 Obtain a Monte Carlo estimate of
 \[\int_1^\infty \frac{x^2}{\sqrt{2\pi}} e^{-\frac{x^2}{2}} dx\] by
 importance sampling and evaluate its variance. Write a 
 
-# Answer: your answer starts here…
+## Use a Cauchy distribution to implement importance sampling.
 
 ``` r
-#Your R codes/functions 
+ncandidates <- 1000;  
+M <- sqrt(2*pi/exp(1))
+u <- runif(ncandidates)
+x <- tan(pi * (runif(ncandidates) - 0.5))
+accepted <- NULL      # Initialize the vector of accepted values
+for(i in 1:ncandidates)
+  if(u[i] <= dnorm(x[i])/(M * dcauchy(x[i])))
+    accepted <- c(accepted, x[i])    # Accept x[i]
+accepted <- x[u <= dnorm(x)/(M * dcauchy(x))]
+c(mean(accepted), sd(accepted))
 ```
+
+    ## [1] 0.09311419 1.02000473
