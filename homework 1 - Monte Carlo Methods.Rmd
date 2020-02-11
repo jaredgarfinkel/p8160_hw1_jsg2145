@@ -62,8 +62,6 @@ X <- (U < 0.5) * log(2*U) + (U >= 0.5) * -log(2-2*U)
 
 plot(X)
 hist(X, prob = T)
-
-
 ```
 
 #Problem 2
@@ -228,7 +226,9 @@ for(i in 1:ncandidates)
   if(u[i] <= dnorm(x[i])/(M * dcauchy(x[i])))
     accepted <- c(accepted, x[i])    # Accept x[i]
 accepted <- x[u <= dnorm(x)/(M * dcauchy(x))]
-c(mean(accepted), sd(accepted))
+var(accepted)
+plot(accepted)
+hist(accepted)
 ```
 
 

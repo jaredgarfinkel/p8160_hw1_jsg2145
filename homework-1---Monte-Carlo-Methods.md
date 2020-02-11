@@ -192,7 +192,19 @@ for(i in 1:ncandidates)
   if(u[i] <= dnorm(x[i])/(M * dcauchy(x[i])))
     accepted <- c(accepted, x[i])    # Accept x[i]
 accepted <- x[u <= dnorm(x)/(M * dcauchy(x))]
-c(mean(accepted), sd(accepted))
+var(accepted)
 ```
 
-    ## [1] 0.09311419 1.02000473
+    ## [1] 1.04041
+
+``` r
+plot(accepted)
+```
+
+<img src="homework-1---Monte-Carlo-Methods_files/figure-gfm/unnamed-chunk-8-1.png" width="90%" />
+
+``` r
+hist(accepted)
+```
+
+<img src="homework-1---Monte-Carlo-Methods_files/figure-gfm/unnamed-chunk-8-2.png" width="90%" />
