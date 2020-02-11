@@ -82,7 +82,7 @@ distribution.)
 set.seed(1001)
 
 accrej <- function(fdens, gdens, beta, M = (4/pi), x){
-  x = runif(2222, min = -beta, max = beta)
+  x = runif(100, min = -beta, max = beta)
   return(x[runif(length(x)) <= fdens(x, beta) / (M * gdens(x, beta))])
 }
 
@@ -126,7 +126,10 @@ better to use \(U^2\) rather than \(U\) as the control variate, where
 \(U\sim U(0,1)\). To do this, use simulation to approximate the
 necessary covariances. In addition, implement your algorithms in 
 
-# Answer: your answer starts here…
+## Using U^2 the variance is lower than using U as the control variate
+
+The variance is lower for u^2 (-4.43) than for u (-4.09) as the control
+variate as shown below.
 
 ``` r
 gfun<-function(x){ 
@@ -184,27 +187,30 @@ importance sampling and evaluate its variance. Write a
 
 ``` r
 ncandidates <- 1000;  
-M <- sqrt(2*pi/exp(1))
+M <- sqrt(2*pi)
 u <- runif(ncandidates)
-x <- tan(pi * (runif(ncandidates) - 0.5))
+m <- exp((-x^2)/2)
+y <- function(x){
+  x^2*m/M
+}
 accepted <- NULL      # Initialize the vector of accepted values
-for(i in 1:ncandidates)
-  if(u[i] <= dnorm(x[i])/(M * dcauchy(x[i])))
+for(i in 1:ncandidates){
+  if(u[i] <= y(x[i])/dcauchy(x[i]))
     accepted <- c(accepted, x[i])    # Accept x[i]
-accepted <- x[u <= dnorm(x)/(M * dcauchy(x))]
+    accepted <- x[u <= dnorm(x)/(M * dcauchy(x))]
+}
+```
+
+``` r
+Y <- function(x){
+  y/dcauchy(x)
+}
+
+
+integrate(Y, 1, 10000)
+
+
 var(accepted)
-```
-
-    ## [1] 1.04041
-
-``` r
 plot(accepted)
-```
-
-<img src="homework-1---Monte-Carlo-Methods_files/figure-gfm/unnamed-chunk-8-1.png" width="90%" />
-
-``` r
 hist(accepted)
 ```
-
-<img src="homework-1---Monte-Carlo-Methods_files/figure-gfm/unnamed-chunk-8-2.png" width="90%" />
