@@ -188,12 +188,21 @@ importance sampling and evaluate its variance. Write a
 
 ## Use a normal distribution to implement importance sampling on the function above.
 
-I generated a random sample of a uniform distribution from 0 to 1.
+By generating a random samples of an exponential distribution, the range
+covers that in the integral above.
+
+Then a normal distribution function was chosen to conduct importance
+sampling by dividing the target distribution by another distribution.
+
+Using acceptance and rejection methods, a vector was created to estimate
+this quotient.
+
+Then the values of the vector were averaged over the range of the
+integral.
 
 ``` r
 ncandidates <- 100000;  
 M <- exp(-1)
-u = runif(ncandidates)
 x <- rnorm(ncandidates)
 Mfun <- function(x){
   x^2*exp(-x^2/2)/sqrt(2*pi)
@@ -212,10 +221,15 @@ accrej <- function(Mfun, pfun, M, x){
   return(accepted)
 }
 
-y = accrej(Mfun, pfun, 1/exp(1), x)
+y = accrej(Mfun, pfun, M, x)
 
-hist(u)
 hist(y, prob = T)
+```
 
+<img src="homework-1---Monte-Carlo-Methods_files/figure-gfm/unnamed-chunk-8-1.png" width="90%" />
+
+``` r
 sum(y*(y>1))/length(y*(y>1))
 ```
+
+    ## [1] 0.3970224
