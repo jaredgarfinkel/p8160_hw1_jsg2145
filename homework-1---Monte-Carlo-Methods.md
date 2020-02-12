@@ -118,11 +118,14 @@ x = median(exp(u^2))
 xy = tibble(
   median = x,
   mean = y
-)
+) %>% 
+  knitr::kable()
 ```
 
-\#Problem 5 Show that in estimating \(\theta=E\sqrt{1-U^2}\) it is
-better to use \(U^2\) rather than \(U\) as the control variate, where
+\#Problem 5
+
+Show that in estimating \(\theta=E\sqrt{1-U^2}\) it is better to use
+\(U^2\) rather than \(U\) as the control variate, where
 \(U\sim U(0,1)\). To do this, use simulation to approximate the
 necessary covariances. In addition, implement your algorithms in 
 
@@ -183,34 +186,36 @@ c(var(ga), var(hha2))
 \[\int_1^\infty \frac{x^2}{\sqrt{2\pi}} e^{-\frac{x^2}{2}} dx\] by
 importance sampling and evaluate its variance. Write a 
 
-## Use a Cauchy distribution to implement importance sampling.
+## Use a normal distribution to implement importance sampling on the function above.
+
+I generated a random sample of a uniform distribution from 0 to 1.
 
 ``` r
-ncandidates <- 1000;  
-M <- sqrt(2*pi)
-u <- runif(ncandidates)
-m <- exp((-x^2)/2)
-y <- function(x){
-  x^2*m/M
+ncandidates <- 100000;  
+M <- exp(-1)
+u = runif(ncandidates)
+x <- rnorm(ncandidates)
+Mfun <- function(x){
+  x^2*exp(-x^2/2)/sqrt(2*pi)
 }
-accepted <- NULL      # Initialize the vector of accepted values
-for(i in 1:ncandidates){
-  if(u[i] <= y(x[i])/dcauchy(x[i]))
-    accepted <- c(accepted, x[i])    # Accept x[i]
-    accepted <- x[u <= dnorm(x)/(M * dcauchy(x))]
+pfun <- function(x){
+  dnorm(x)
 }
-```
-
-``` r
-Y <- function(x){
-  y/dcauchy(x)
+accrej <- function(Mfun, pfun, M, x){
+  ncandidates = length(x)
+  u = rexp(ncandidates)
+  accepted <- NULL      # Initialize the vector of accepted values
+  for(i in 1:ncandidates) {
+    if(u[i] <= Mfun(x[i])/(M*pfun(x[i])))
+      accepted <- c(accepted, x[i])  # Accept x[i]
+  }
+  return(accepted)
 }
 
+y = accrej(Mfun, pfun, 1/exp(1), x)
 
-integrate(Y, 1, 10000)
+hist(u)
+hist(y, prob = T)
 
-
-var(accepted)
-plot(accepted)
-hist(accepted)
+sum(y*(y>1))/length(y*(y>1))
 ```
